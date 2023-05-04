@@ -1,0 +1,996 @@
+%!TEX encoding = UTF-8 Unicode
+%!TEX TS-program = xelatex
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Connor Johnson
+% CMPT 435L_111_23S
+% Spring 2023
+% Lab4/ Git/LaTeX
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{tabto}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage[a4paper, total={6in, 8in}]{geometry}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.9,0.5,0.45}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\definecolor{keyWordBlue}{rgb}{.2, .4, .9}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{keyWordBlue},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+
+
+\documentclass[a4paper,12pt]{article}
+\usepackage[margin=22mm]{geometry}
+\usepackage{fontspec,xltxtra,polyglossia,titling,graphicx}
+\usepackage{verbatim,gb4e,synttree,multicol} % choose or add what you need
+\usepackage[colorlinks,urlcolor=blue,citecolor=blue,linkcolor=blue]{hyperref}
+\setmainfont[Mapping=tex-text]{Times New Roman} % or another similar font
+\setdefaultlanguage{english}
+\setotherlanguages{norsk}
+\usepackage{natbib}
+\bibliographystyle{apalike}
+\frenchspacing
+\newcommand{\tig}[1] {\fontspec{Abyssinica SIL} #1} 
+\usepackage{graphicx}
+\graphicspath{ {./images/} }
+
+\title{Assignment 4: Graphs and Trees } 
+\author{Connor H. Johnson \\ connor.johnson1@marist.edu}
+\hyphenation{lem-mat-iz-at-ion uni-code}
+
+\begin{document}
+\begin{center} \vfill
+\textbf{\Large Marist College}
+
+{\large MS in Computer Science
+
+School of Computer Science and Mathematics \vfill
+
+CMPT-435L-111-23s Algorithm Analysis and Design 
+
+Brian Gormanly
+
+Spring 2023 
+
+\vfill
+\includegraphics[width=0.5\textwidth]{Marist.png} \vfill
+
+\emph{\Large\thetitle} \vfill 
+\theauthor} \vfill
+
+\end{center} \clearpage
+\maketitle
+
+\begin{center}
+\begin{large}
+    Overview
+\end{large}    
+\end{center}
+
+\begin{center} \noindent
+This document will cover how I implemented an adjacent list, matrix, breadth-first traversal, and depth-first traversal for an un-directed graph using pre-made graphs inside of \verb|graphs1.txt|. Following that I was then tasked in creating a binary search tree and printing out each nodes directional path when being inserted using the \verb|magicitems.txt| phrases. To continue on that, I was then provided the \verb|magicitems-find-in-bst.txt|, which is a shorter version of the \verb|magicitems.txt| file and was tasked in traversing the \verb|magicitems.txt| for each individual phrase in the \verb|magicitems-find-in-bst.txt| and print out the path/comparisons it took to get there. In this document I will also being including:
+\begin{itemize}
+\item The code I used to complete this project.
+\item Short explanations on certain parts of the code.
+\item Resources to look at for reference.
+
+\end{itemize}
+\end{center}
+
+\begin{center}
+    -----------------------------------------------------------------------
+\end{center}
+
+\begin{center}
+\begin{large}
+    Code listings
+\end{large}
+\end{center}
+
+
+First, I would like to show you the four files I used to create this project: \verb|mainProgram.java|, \verb|sortingAlgorithms.java|, \verb|searchingAlogrithms|, and \verb|hashing.java|. 
+
+\begin{footnotesize}
+The code provided will visible on the GitHub repository\footnote{GitHub: \url{https://github.com/MaristGormanly/CJohnson-435/tree/main/Lab4}} 
+\end{footnotesize}
+
+\section {\Large {mainProgram.java}}
+
+   \lstinputlisting[language=Java]{mainProgram.java}
+
+
+
+
+\section {\Large {graphVersions.java}}
+
+   \lstinputlisting[language=Java]{graphVersions.java}
+
+
+
+
+
+\section {\Large {linkedList.java}}
+
+   \lstinputlisting[language=Java]{linkedList.java}
+
+
+
+
+
+\section {\Large {binarySearch.java}}
+
+   \lstinputlisting[language=Java]{binarySearch.java}
+
+
+
+
+
+
+
+
+\begin{center}
+    -----------------------------------------------------------------------
+\end{center}
+
+\begin{center}
+\begin{large}
+    Code Explanation
+\end{large}
+\end{center}
+
+Now that all files can be reviewed, it is important to review parts of the code essential to completing this project. Below will be breakdowns of key components inside the file/folders of \verb|mainProgram.java|, \verb|binarySearch|, \verb|graphVersions|, and \verb|linkedList|.
+
+\pagebreak
+
+\begin{center}
+\begin{large}
+    mainProgram.java
+\end{large}
+\end{center}
+ 
+\begin{large}
+    1.) main() method (\verb|mainProgram.java|)
+\end{large}
+
+
+\begin{itemize}
+\item Inside of \verb|mainProgram.java| section, we construct the main method on lines: 10 - 158 :
+
+\begin{verbatim}
+    public static void main(String[] args) {
+
+        //Binary Search Tree 
+        try {
+            File magicitemsFile = new File("/Users/Johnson_code/CJohnson-435-1/Lab4/textFiles/magicitems.txt");
+            File compressedMagicitems = new File("/Users/Johnson_code/CJohnson-435-1/Lab4/textFiles/magicitems-find-in-bst.txt");
+        
+            Scanner bstScanner = new Scanner(magicitemsFile);
+            Scanner compressedBstScanner = new Scanner(compressedMagicitems);
+            
+            ArrayList<String> arrayList = new ArrayList<String>();
+            ArrayList<String> compressedArrayList = new ArrayList<String>();
+        
+            binarySearch binaryTree = new binarySearch();
+            binarySearch compressedBinaryTree = new binarySearch();
+            
+            //orginal 666 search
+            while (bstScanner.hasNextLine()) {
+                String line = bstScanner.nextLine();
+                line = line.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+                arrayList.add(line);
+            }
+        
+            //compressed magicitems list
+            while (compressedBstScanner.hasNextLine()) {
+                String line = compressedBstScanner.nextLine();
+                line = line.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+                compressedArrayList.add(line);
+            }
+        
+            //goes through arrayList to aquire row by row
+            for (int i = 0; i < arrayList.size(); i++) {
+                String magicitem = arrayList.get(i);
+                int asciiValue = 0;
+                //goes through arraylist to get ascii value
+                for (int j = 0; j < magicitem.length(); j++) {
+                    asciiValue += (int) magicitem.charAt(j);
+                }
+                binaryTree.addNode(asciiValue, magicitem);
+            }
+        
+            System.out.println("\n--------------------------------\n");
+        
+            binaryTree.inOrderTraverseTree(binaryTree.root);
+        
+            System.out.println("\n--------------------------------\n");
+        
+
+            double totalComparisons = 0.0;
+            int totalLookups = 0;
+            
+            //same code for arrayList instead it iterates for the compressedArrayList
+            for (int i = 0; i < compressedArrayList.size(); i++) {
+                String magicitem = compressedArrayList.get(i);
+                int asciiValue = 0;
+                for (int j = 0; j < magicitem.length(); j++) {
+                    asciiValue += (int) magicitem.charAt(j);
+                }
+                compressedBinaryTree.addNode(asciiValue, magicitem);
+            
+
+                String result = compressedBinaryTree.findNode(asciiValue);
+                System.out.print(result);
+                if (!result.equals("Not found")) {
+                    String[] parts = result.split(" ");
+                    totalComparisons += Integer.parseInt(parts[parts.length - 1]);
+                    totalLookups++;
+                }
+
+            }
+            
+            double averageComparisons = totalComparisons / totalLookups;
+            System.out.println("\nAverage number of comparisons: " + averageComparisons);
+            
+                
+
+
+
+
+        
+            bstScanner.close();
+            compressedBstScanner.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        
+        
+        
+        
+        
+
+        //Undirected Graphs
+        try {
+            File file = new File("/Users/Johnson_code/CJohnson-435-1/Lab4/textFiles/graphs1.txt");
+            Scanner scanner = new Scanner(file);
+            int vertexCounter = 0;
+            ArrayList<Integer> adjacencyEdges = new ArrayList<Integer>();
+            ArrayList<Integer> matrixEdges = new ArrayList<Integer>();
+    
+    
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+            
+                if (line.startsWith("--")) { // Found start of a new graph
+                    graphVersions g = new graphVersions(vertexCounter+1);
+                    for (int i = 0; i < adjacencyEdges.size(); i += 2) {
+                        int adjacencyIndex1 = adjacencyEdges.get(i);
+                        int adjacencyIndex2 = adjacencyEdges.get(i+1);
+                        g.addEdge(adjacencyIndex1, adjacencyIndex2); // add edge to the graph
+                    }
+            
+                    if (vertexCounter > 0) {
+                        printGraphInformation(g, matrixEdges, vertexCounter+1);
+                    }
+            
+                    vertexCounter = 0;
+                    adjacencyEdges.clear(); //clear for the next iteration
+                    matrixEdges.clear();
+                } else if (line.contains("add vertex")) {
+                    vertexCounter++;
+                } else if (line.contains("add edge")) {
+                    int adjacencyIndex1 = Integer.parseInt(line.substring(line.indexOf("edge") + 5, line.indexOf("-") - 1)); //chatgpt suggested code for debugging
+                    int adjacencyIndex2 = Integer.parseInt(line.substring(line.indexOf("-") + 2));
+                    adjacencyEdges.add(adjacencyIndex1);
+                    adjacencyEdges.add(adjacencyIndex2);
+            
+                    int matrixIndex1 = Integer.parseInt(line.substring(line.indexOf("edge") + 5, line.indexOf("-") - 1));
+                    int matrixIndex2 = Integer.parseInt(line.substring(line.indexOf("-") + 2));
+                    matrixEdges.add(matrixIndex1);
+                    matrixEdges.add(matrixIndex2);
+                }
+            }
+    
+            // Process the last graph
+            graphVersions g = new graphVersions(vertexCounter+1); 
+            for (int i = 0; i < adjacencyEdges.size(); i += 2) {
+                int adjacencyIndex1 = adjacencyEdges.get(i);
+                int adjacencyIndex2 = adjacencyEdges.get(i+1);
+                g.addEdge(adjacencyIndex1, adjacencyIndex2); // add edge to the graph
+            }
+    
+            printGraphInformation(g, matrixEdges, vertexCounter +1);
+    
+            scanner.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+    }  
+\end{verbatim}
+\item The \verb|main()| method is used for the purpose of traversing through each file give in the assignment. The first try-catch statement is used for creating the binary search tree, collecting an ASCII value and its correlated magic items; and a second try-catch obtains the edges and vertex values for the adjacency list, matrix, breadth-first search and depth-first search. A confusing part of the main method's code that should be cleared up is on lines 144-151. This code is used to read and print the last graph. My original loop looks for the next '--' to make a graph, which after the last graph listed there isn't another '--' so I needed to process the last one with additional code. \\
+
+\end{itemize}
+
+
+\begin{large}
+    2.) printGraphInformation() method (\verb|mainProgram.java|)
+\end{large}
+
+
+\begin{itemize}
+\item Inside of \verb|mainProgram.java| section, we construct the linear searching method on lines: 161 - 183 :
+
+\begin{verbatim}
+        //printing graph information
+        private static void printGraphInformation(graphVersions g, ArrayList<Integer> matrixEdges, int vertexCounter) {
+            System.out.println("\n ------------------------------------------\n");
+            System.out.println("\n Adjacency List");
+            System.out.println(g);
+
+
+        
+            graphVersions.matrix m = g.new matrix(vertexCounter);
+            for (int i = 0; i < matrixEdges.size(); i += 2) {//(+2 each edge in the graph )
+                int matrixIndex1 = matrixEdges.get(i);
+                int matrixIndex2 = matrixEdges.get(i+1);
+                m.addEdge(matrixIndex1, matrixIndex2); // add edge to the graph
+            }
+        
+            System.out.println("\n Matrix List");
+            System.out.println(m);
+        
+            System.out.println("\n Breadth First Search");
+            g.bfs(1);
+        
+            System.out.println("\n Depth First Search");
+            g.dfs(1);
+        }
+\end{verbatim}
+\item The \verb|printGraphInformation()| method's sole purpose is to divide print statements for the un-directed graphs. \\
+
+\end{itemize}
+
+
+
+
+\begin{center}
+\begin{large}
+    binarySearch.java
+\end{large}
+\end{center}
+
+\begin{large}
+    1.) binarySearching() method (\verb|binarySearch.java|)
+\end{large}
+
+
+\begin{itemize}
+\item Inside of \verb|binarySearch.java| section, we construct the binarySearch class on lines: 3-20 :
+
+\begin{verbatim}
+public class binarySearch {
+
+    class Node {
+        int asciiValue;
+        String phrase;
+
+        Node leftChild;
+        Node rightChild;
+
+        Node(int key, String phrase) {
+            this.asciiValue = key;
+            this.phrase = phrase;
+        }
+
+        public String toString() {
+            return phrase;
+        }
+    }
+
+    public Node root;
+\end{verbatim}
+\item The \verb|binarySearch| class creates a Node object that contains an ASCII value, a phrase and  leftChild and rightChild properties. At the end, the toString method is used to return the phrases in the binary search tree. If the toString method is not there, then the ordered traversal will not print the phrases.\\
+
+\end{itemize}
+
+
+\begin{large}
+    2.) addNode() method (\verb|binarySearch.java|)
+\end{large}
+
+\begin{itemize}
+\item Inside of \verb|binarySearch.java| section, we construct the addNode method on lines: 24-59 :
+
+\begin{verbatim}
+    public void addNode(int asciiValue, String phrase) {
+        Node newNode = new Node(asciiValue, phrase);
+
+        if (root == null) {
+            root = newNode;
+            System.out.println("Root node: " + phrase );
+            return;
+        }
+
+        String path = "R"; // Path to the new node, starting from the root node.
+        Node focusNode = root;
+        Node parent;
+
+        while (true) {
+            parent = focusNode;
+            if (asciiValue < focusNode.asciiValue) { // less than is left side
+                focusNode = focusNode.leftChild;
+                if (focusNode == null) { // if left node has no children
+                    parent.leftChild = newNode;
+                    System.out.println(phrase + ": " + path + "L");
+                    break;
+                } else {
+                    path += "L"; // Update the path to the new node.
+                }
+            } else { // greater than is right side
+                focusNode = focusNode.rightChild;
+                if (focusNode == null) { // if right node has no children
+                    parent.rightChild = newNode;
+                    System.out.println(phrase + ": " + path + "R");
+                    break;
+                } else {
+                    path += "R"; // Update the path to the new node.
+                }
+            }
+        }
+    }
+\end{verbatim}
+\item The \verb|addNode()| method is used for the section of the assignment of printing the path ('L' and 'R') of the phrase. The path adds 'R' or 'L' strings and will also need an additional 'R' or 'L' in the print statement due to it being its final path route. It is also important to note the print of the root node so that you know the start of the binary search tree.  \\
+
+\end{itemize}
+
+
+\begin{large}
+    3.) findNode() method (\verb|binarySearch.java|)
+\end{large}
+
+\begin{itemize}
+\item Inside of \verb|binarySearch.java| section, we construct the findNode method on lines: 61-79 :
+
+\begin{verbatim}
+    public String findNode(int key) {
+        int numComparisons = 0;
+        Node focusNode = root;
+        StringBuilder path = new StringBuilder();
+        while (focusNode.asciiValue != key) { //loop to find desired node
+            numComparisons++;
+            if (key < focusNode.asciiValue) { //goes to the left of the tree
+                path.append("L,"); 
+                focusNode = focusNode.leftChild;
+            } else {
+                path.append("R,"); //goes to the right of the tree
+                focusNode = focusNode.rightChild;
+            }
+            if (focusNode == null) {
+                return "Not found";
+            }
+        }
+        return " Number of comparisons: " + numComparisons + "  ";
+    }
+\end{verbatim}
+\item The \verb|findNode()| method is used for the finding the content inside of \verb|magicitems-find-in-bst.txt| and retrieves the path in a different way by appending it to a path variable instead of using a '+=' operator.\\
+
+\end{itemize}
+
+
+\begin{large}
+    4.) inOrderTraverseTree() method (\verb|binarySearch.java|)
+\end{large}
+
+\begin{itemize}
+\item Inside of \verb|binarySearch.java| section, we construct the inOrderTraverseTree method on lines: 81-87):
+\end{itemize}
+
+\begin{verbatim}
+    public void inOrderTraverseTree(Node focusNode) {
+        if (focusNode != null) { // make sure its not empty
+            inOrderTraverseTree(focusNode.leftChild);
+            System.out.print(focusNode+", ");
+            inOrderTraverseTree(focusNode.rightChild);
+        }
+    }
+\end{verbatim}
+
+\begin{itemize}
+
+\item The \verb|inOrderTraverseTree()| method is for the purpose of printing the an in order traversal. It makes sure it is not empty and after that it prints the left and right children.\\
+
+\end{itemize}
+
+\pagebreak
+
+
+\begin{center}
+\begin{large}
+    graphVersions.java
+\end{large}
+\end{center}
+
+
+
+\begin{large}
+    1.) graphVersions class with graphVersions method (\verb|graphVersions.java|)
+\end{large}
+
+\begin{itemize}
+\item Inside of \verb|graphVersions.java| section, we construct the graphVersions class and method on lines: 12-27 :
+\end{itemize}
+
+\begin{verbatim}
+public class graphVersions {
+
+    private linkedList<Integer>[] adj;
+    private int Vertices;
+    private int Edges;    
+
+    public graphVersions(int nodes) {
+        this.Vertices = nodes;
+        this.Edges = 0;
+        this.adj = new linkedList[nodes]; //doubly linked list
+        // Loop over all vertices in the graph
+        for(int vertex = 0; vertex < Vertices; vertex++){  
+            // Add an empty ArrayList to the adjacency list for each vertex
+            adj[vertex] = new linkedList<>();
+        }
+    }       
+\end{verbatim}
+
+\begin{itemize}
+
+\item The \verb|graphVersions| class and method contains an array of linked lists adj that represents the adjacency list of the graph, and integer variables Vertices and Edges that represent the number of vertices and edges in the graph. The constructor initializes the Vertices and Edges variables, and creates a linked list for each vertex in the graph for adj.\\
+
+\end{itemize}
+
+
+\begin{large}
+    2.) addEdge() method (\verb|graphVersions.java|)
+\end{large}
+
+\begin{itemize}
+
+\item Inside of \verb|graphVersions.java| section, we construct the addEdge method on lines: 30-35 : 
+
+\end{itemize}
+
+\begin{verbatim}
+    //creates adjecency between the beginning and the target vertices
+    public void addEdge(int source, int destination) {
+        //add the -1 so that we don't include vertex 0 (also included in toString() method)
+        adj[source].add(destination);
+        adj[destination].add(source);
+        Edges++;
+    }    
+\end{verbatim}
+
+\begin{itemize}
+
+\item The \verb|addEdge()| method creates an edge by adding destination to the linked list of source in the adjacency list, and adding source to the linked list of destination in the adjacency list. After that it increments the edge.\\
+
+\end{itemize}
+
+
+
+\begin{large}
+     3.) toString() method (\verb|graphVersions.java|)
+\end{large}
+
+\begin{itemize}
+
+\item Inside of \verb|graphVersion.java| section, we construct the toString method on lines: 37-49 :
+
+\end{itemize}
+
+\begin{verbatim}
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        sb.append(Vertices +  " vertices " + Edges  + " edges " + "\n");
+        for(int vertex = 0; vertex < Vertices; vertex++){
+            sb.append((vertex) + ": ");
+            for(int w : adj[vertex]){
+                sb.append((w) + " ");
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
+
+    }
+\end{verbatim}
+
+\begin{itemize}
+
+\item The \verb|toString()| method loops over all the vertices in the graph and appends the vertex number to sb. For each vertex, it loops over its linked list in the adjacency list and appends the vertices that it is connected to and then returns the string representation of sb.\\
+
+\end{itemize}
+
+
+
+
+\begin{large}
+     4.) bfs() method (\verb|graphVersions.java|)
+\end{large}
+
+\begin{itemize}
+
+\item Inside of \verb|graphVersion.java| section, we construct the bfs method on lines: 52-69 :
+
+\end{itemize}
+
+\begin{verbatim}
+    // code was copied and then editied from https://www.youtube.com/watch?v=grewOnmAd0k
+    public void bfs(int startVertex) {
+        boolean[] visited = new boolean[Vertices];
+        Queue<Integer> queued = new LinkedList<>();
+        visited[startVertex] = true;
+        queued.offer(startVertex);
+    
+        while(!queued.isEmpty()) {
+            int u = queued.poll();
+            System.out.print((u) + " ");
+    
+            for(int vertex : adj[u]) {
+                if(!visited[vertex]) { 
+                    visited[vertex] = true;
+                    queued.offer(vertex);
+                }
+            }
+        }
+    }
+\end{verbatim}
+
+\begin{itemize}
+
+\item The \verb|bfs()| method implements a version of a breadth-first search that adds to a queue and loops while the queue is not empty. In each iteration of the loop, it removes the first vertex from the queue, prints its value, and then checks all its adjacent vertices to see if they have been visited. If an adjacent vertex has not been visited, it marks it as visited and adds it to the queue.\\
+
+\end{itemize}
+
+
+
+
+\begin{large}
+     5.) dfs() method (\verb|graphVersions.java|)
+\end{large}
+
+\begin{itemize}
+
+\item Inside of \verb|graphVersion.java| section, we construct the dfs method on lines: 73-96):
+
+\end{itemize}
+
+\begin{verbatim}
+    // code was copied and then editied from https://www.youtube.com/watch?v=Wzk6BBEBlYE&t=1s 
+    public void dfs(int startVertex) {
+        boolean[] visited = new boolean[Vertices];
+        Stack<Integer> stack = new Stack<>();
+    
+        stack.push(startVertex);
+    
+        while(!stack.isEmpty()) {
+            int u = stack.pop();
+    
+            if(!visited[u]) {
+                visited[u] = true;
+                System.out.print((u) + " ");
+    
+                // Push the adjacent vertices onto the stack in the order in which they appear in the linked list
+                linkedList<Integer> adjList = adj[u];
+                for(int i = adjList.size() - 1; i >= 0; i--) {
+                    int v = adjList.get(i);
+                    if(!visited[v]) {
+                        stack.push(v);
+                    }
+                }
+            }
+        }
+    }
+\end{verbatim}
+
+\begin{itemize}
+
+\item The \verb|dfs()| method implements a version of a depth-first search that pops a vertex from the stack, marks it as visited, and prints its value from each iteration. Then it pushes the adjacent vertices onto the stack in the order in which they appear in the linked list. \\
+
+\end{itemize}
+
+
+
+
+
+\begin{large}
+     6.) matrix class and method (\verb|graphVersions.java|)
+\end{large}
+
+\begin{itemize}
+
+\item Inside of \verb|graphVersion.java| section, we construct the matrix class and method on lines: 102-112):
+
+\end{itemize}
+
+\begin{verbatim}
+    public class matrix {
+
+        private int [][] adjMatrix;
+        private int Vertices;
+        private int Edges;
+    
+        public matrix(int nodes) {
+            this.Vertices = nodes;
+            this.Edges = 0;
+            this.adjMatrix = new int[nodes][nodes];
+        }
+\end{verbatim}
+
+\begin{itemize}
+
+\item The \verb|matrix| class and method that initializes an empty matrix using nodes that will later be iterated through a source node and destination node. I am also setting the edges to 0 for printing purposes as later those will be set to 1 if there is an edge present. \\
+
+\end{itemize}
+
+
+
+\begin{large}
+     7.) addEdge() method (\verb|graphVersions.java|)
+\end{large}
+
+\begin{itemize}
+
+\item Inside of \verb|graphVersion.java| section, we construct the addEdge method on lines: 116-120):
+
+\end{itemize}
+
+\begin{verbatim}
+        //creates adjecency between the beginning and the target vertices
+        public void addEdge(int source, int destination) {
+            adjMatrix[source][destination] = 1;
+            adjMatrix[destination][source] = 1;
+            Edges++;
+        }
+\end{verbatim}
+
+\begin{itemize}
+
+\item The \verb|addEdge()| method for the matrix that also creates an edge by adding destination to the linked list of source in the adjacency list, and adding source to the linked list of destination in the adjacency list. However, for printing reasons, I know set it to 1 for it to show that there is edge.  After that it increments the edge.\\
+
+\end{itemize}
+
+
+
+
+
+\begin{large}
+     8.) toString() method (\verb|graphVersions.java|)
+\end{large}
+
+\begin{itemize}
+
+\item Inside of \verb|graphVersion.java| section, we construct the toString method on lines: 116-141):
+
+\end{itemize}
+
+\begin{verbatim}
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append(Vertices + " verticies, " + Edges + " edges " + "\n");
+            
+            // Iterate over each vertex in the graph
+            for(int vertex = 0; vertex < Vertices; vertex++) {
+                // Append the vertex number to the string
+                sb.append(vertex).append(": ");
+    
+                // Iterate over each adjacent vertex of the current vertex
+                for(int w : adjMatrix[vertex]){
+                    sb.append(w + " ");
+                }
+                
+                sb.append("\n");
+            }
+            return sb.toString();
+        }
+    
+    }
+\end{verbatim}
+
+\begin{itemize}
+
+\item The \verb|toString()| method for the matrix iterates over each vertex and its adjacent vertices and appending them to sb.\\
+
+\end{itemize}
+
+\pagebreak
+
+\begin{center}
+\begin{large}
+    linkedList.java
+\end{large}
+\end{center}
+
+
+\begin{large}
+    1.) linkedList class (\verb|linkedList.java|)
+\end{large}
+
+\begin{itemize}
+\item Inside of \verb|linkedList.java| section, we construct the linkedList class and from lines 6-84 :
+\end{itemize}
+
+\begin{verbatim}
+package linkedList;
+
+import java.util.Iterator;
+
+            //generic types
+public class linkedList<T> implements Iterable<T> {
+    private Node<T> head = null;
+    private Node<T> tail = null;
+    private int size = 0;
+
+    public void add(T data) {
+        Node<T> newNode = new Node<T>(data);
+
+        if (head == null) { //if node is empty
+            head = newNode;
+            tail = newNode;
+        } else {
+            tail.next = newNode;
+            newNode.prev = tail;
+            tail = newNode;
+        }
+
+        size++;
+    }
+
+    public T get(int index) {
+        Node<T> current = head;
+        for (int i = 0; i < index; i++) { //traverse list
+            current = current.next;
+        }
+
+        return current.data;
+    }
+
+    public int size() {
+        return size;
+    }
+
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return new ListIterator<T>(head);
+    }
+
+    //chatgpt suggested code
+    private static class ListIterator<T> implements Iterator<T> {
+        private Node<T> current;
+
+        public ListIterator(Node<T> head) {
+            current = head;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return current != null;
+        }
+
+        @Override
+        public T next() {
+            if (!hasNext()) {
+                throw new java.util.NoSuchElementException();
+            }
+
+            T data = current.data;
+            current = current.next;
+            return data;
+        }
+    }
+
+    private static class Node<T> {
+        private T data;
+        private Node<T> prev;
+        private Node<T> next;
+
+        public Node(T data) {
+            this.data = data;
+            this.prev = null;
+            this.next = null;
+        }
+    }
+}      
+\end{verbatim}
+
+\begin{itemize}
+
+\item The \verb|linkedList| class defines a linkedList class that implements the iterable interface, which allows it to be used in a for-each loop which is used in multiple instances of the \verb|graphVersions.java|. It uses generic types so that it can hold any type of data. The linkedList class has methods to add elements to the list, get an element at a specific index, check the size of the list, and check if the list is empty.\\
+
+\end{itemize}
+
+ 
+
+\begin{center}
+    -----------------------------------------------------------------------
+\end{center}
+
+\pagebreak
+
+\begin{center}
+\begin{large}
+    Resources Used
+\end{large}
+\end{center}
+
+Here is a list of resources I used throughout my completion of this project:\\
+
+Adjacency List
+    \begin{itemize}
+        \item https://www.youtube.com/watch?v=6rDKLqFLfh0 
+    \end{itemize}
+
+Matrix
+    \begin{itemize}
+        \item https://www.youtube.com/watch?v=X1LdtRW88c0&t=27s
+    \end{itemize}
+
+Bredth-First Search
+    \begin{itemize}
+        \item https://www.youtube.com/watch?v=grewOnmAd0k
+        \item https://www.geeksforgeeks.org/breadth-first-search-or-bfs-for-a-graph/ 
+    \end{itemize}
+    
+Depth-First Search
+    \begin{itemize}
+        \item https://www.youtube.com/watch?v=Wzk6BBEBlYE&t=1s 
+        \item https://www.baeldung.com/java-depth-first-search 
+    \end{itemize}
+
+Binary Search Tree
+    \begin{itemize}
+        \item https://www.geeksforgeeks.org/binary-search-tree-set-1-search-and-insertion/
+        \item https://www.softwaretestinghelp.com/binary-search-tree-in-java/
+    \end{itemize}
+        
+Debugging
+    \begin{itemize}
+        \item https://openai.com/blog/chatgpt/ 
+    \end{itemize}
+    
+Helping with visualization 
+    \begin{itemize}
+        \item https://pythontutor.com/visualize.html#mode=display
+    \end{itemize}
+
+
+\end{document}
